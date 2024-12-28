@@ -1,0 +1,230 @@
+/* --------------------------------- */
+/* General Styles                    */
+/* --------------------------------- */
+.App {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.App-header {
+  background-color: #7d9ddda9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: rgb(66, 18, 18);
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+/* --------------------------------- */
+/* Header Section                    */
+/* --------------------------------- */
+.header {
+  display: flex;
+  align-items: center;
+  background-color: #f4f4f4;
+  padding: 1px;
+  border-bottom: 2px solid #000000;
+}
+
+.logo {
+  width: 80px;
+  margin-right: 430px;
+}
+
+.header-titles h1, 
+.header-titles h2 {
+  margin: 0;
+  color: #000000;
+}
+
+/* --------------------------------- */
+/* Main Layout Container             */
+/* --------------------------------- */
+.container {
+  display: flex; /* Layout en fila */
+  justify-content: flex-start; /* Alinea los elementos hacia la izquierda */
+  align-items: flex-start;
+  gap: 20px; /* Espaciado entre contenedores */
+  padding: 10px;
+  margin-right: 1px;
+}
+
+/* --------------------------------- */
+/* Slider Section                    */
+/* --------------------------------- */
+.slider-container {
+  display: flex;
+  flex: 0.1;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5px;
+  margin-left: 0px;
+  width: 300px; /* Ancho del contenedor */
+  background-color: #f9f9f9; /* Fondo del contenedor */
+  padding: 20px; /* Espaciado interno */
+  border: 1px solid #ccc; /* Borde alrededor del contenedor */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(175, 171, 171, 0.1); /* Sombra para dar un efecto elevado */
+}
+
+.slider-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: 250px;
+}
+
+.vertical-slider {
+  writing-mode: bt-lr;
+  transform: rotate(270deg);
+  height: 30px;
+  width: 500px;
+  appearance: none;
+  background: linear-gradient(to right, #ddd, #ddd);
+  border-radius: 5px;
+  outline: none;
+}
+
+.vertical-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 10px;
+  height: 30px;
+  background: #d1ce09;
+  cursor: pointer;
+  border-radius: 10%;
+}
+
+.slider-scale {
+  position: absolute;
+  left: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 500px;
+  text-align: right;
+}
+
+.slider-value {
+  text-align: center;
+  margin-top: 300px;
+}
+
+/* --------------------------------- */
+/* Controls Section                  */
+/* --------------------------------- */
+.controls-container {
+  flex: 1;
+  max-width: 350px;
+  margin-top: 5px;
+  margin-left: -1px;
+  background-color: #ffffff;
+  border: 1px solid #ccc; /* Borde alrededor del contenedor */
+  padding: 10px;
+  border-radius: 1px;
+  box-shadow: 0 4px 8px rgba(3, 3, 3, 0.1);
+}
+
+.controls-container h2 {
+  margin-bottom: 30px;
+  margin-left: -10px;
+}
+
+.controls label {
+  display: block;
+  margin-bottom: 40px;
+}
+
+.controls input[type="number"] {
+  width: 80px;
+  padding: 10px;
+  font-size: 18px;
+}
+
+/* --------------------------------- */
+/* Charts Section                    */
+/* --------------------------------- */
+.charts-container {
+  display: flex;
+  flex-direction: column; /* Coloca las filas en columna */
+  gap: 60px; /* Espacio entre las filas */
+}
+
+.chart {
+  flex: 1; /* Ocupa más espacio horizontalmente */
+  min-width: 500px; /* Tamaño mínimo del chart */
+  margin-top: 5px;
+  width: 97%;
+  height: 400px; /* Asegura que todos los charts tengan la misma altura */
+  background-color: #ffffff;
+  border: 1px solid #ccc; /* Borde alrededor del contenedor */
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* --------------------------------- */
+/* Gauges Section                    */
+/* --------------------------------- */
+.gauge {
+  display: flex; /* Aplica flexbox */
+  flex-direction: column; /* Organiza el contenido en columna (título arriba) */
+  justify-content: center; /* Centra el contenido verticalmente */
+  align-items: center; /* Centra el contenido horizontalmente */
+  text-align: center; /* Alinea el texto centrado */
+  margin: 20px auto; /* Centra el gauge en el contenedor */
+  width: 300px; /* Ancho del contenedor */
+  height: 355px; /* Altura del contenedor */
+  background-color: #f9f9f9; /* Color de fondo */
+  padding: 20px; /* Espaciado interno */
+  border: 2px solid #ccc; /* Borde suave */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
+}
+
+.gauge-title {
+  margin-bottom: 10px; /* Espacio entre el título y el círculo */
+  font-size: 18px; /* Tamaño de la fuente */
+  color: #333; /* Color del texto */
+}
+
+.gauge-content {
+  display: flex; /* Flexbox para centrar el círculo */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  width: 100%;
+  height: 100%;
+}
+
+#velocidad-gauge,
+#voltaje-gauge {
+  width: 90%; /* Ajusta el tamaño del gauge */
+  height: auto; /* Mantiene la proporción */
+}
