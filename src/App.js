@@ -1,36 +1,36 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS } from 'chart.js/auto';
 import './App.css';
 import logo from './assets/Logo-EPN.png'; // Importa el logotipo
-import GaugeChart from 'react-gauge-chart'; // Importar la biblioteca de gauges
 import CustomGauge from './CustomGauge'; // Importa el nuevo componente
 
 function App() {
-  const [sliderValue, setSliderValue] = useState(50);
+  const [sliderValue, setSliderValue] = useState(1);
+  const [referenciaActual, setReferenciaActual] = useState(50); // Nuevo estado para referencia
   const [values, setValues] = useState({
-    Kp: 0.0,
-    Ki: 0.0,
-    Kd: 0.0,
-    Kn: 0.0,
-    Ks: 0.0,
+    Kp: 0.0,Ki: 0.0,Kd: 0.0,Kn: 0.0,Ks: 0.0,IAE: 0.0,ISE: 0.0,
   });
   const [dataVelocidad, setDataVelocidad] = useState({ labels: [], datasets: [] });
   const [dataSenalControl, setDataSenalControl] = useState({ labels: [], datasets: [] });
   const [velocidadActual, setVelocidadActual] = useState(0); // Estado para Velocidad
   const [senalControlActual, setSenalControlActual] = useState(0); // Estado para Señal de Control
-
+  const [selector, setSelector] = useState(0); // Estado para almacenar el selector
+ 
 
   // Enviar el valor del slider cuando cambie
   const handleSliderChange = (e) => {
     const newValue = e.target.value;
     setSliderValue(newValue);
 
+    if (selector === 0) {
+      setReferenciaActual(newValue); // Actualiza la referencia si selector es 0
+    }
+
     // Enviar el valor del slider al servidor inmediatamente
     console.log('Enviando valor del slider:', newValue);
-    axios.post('http://192.168.1.15:5003/actualizar-slider', { sliderValue: newValue })
+    axios.post('http://192.168.1.7:5003/actualizar-slider', { sliderValue: newValue })
       .then(response => {
         console.log('Valor del slider enviado:', response.data);
       })
@@ -42,23 +42,28 @@ function App() {
   // Obtener datos desde el servidor cada segundo
   useEffect(() => {
     const fetchData = () => {
-      axios.get('http://192.168.1.15:5003/datos') // Asegúrate de que esta URL sea la correcta
+      axios.get('http://192.168.1.7:5003/datos') // Asegúrate de que esta URL sea la correcta
         .then(response => {
           // Verificar si los datos están vacíos
           if (response.data.length === 0) {
             console.warn('No se recibieron datos del servidor.');
             return;
           }
-  
+
           console.log('Datos recibidos del servidor:', response.data); // Log para depuración
-  
+
           // Actualizar los estados para Velocidad y Señal de Control
           const lastEntry = response.data[0]; // Obtén el último registro
           setVelocidadActual(lastEntry.Velocidad); // Actualiza velocidad
           setSenalControlActual(lastEntry.Senal_control); // Actualiza señal de control
-  
+          setSelector(lastEntry.Selector); // Actualiza el selector desde la base de datos
+          
+          if (lastEntry.Selector === 1) {
+            setReferenciaActual(lastEntry.Referencia);
+          }
+
           // Procesar los datos recibidos para las gráficas
-          const data = response.data.slice(-100).reverse(); // Mostrar los últimos 100 datos sin invertir
+          const data = response.data.slice().reverse(); // Mostrar los últimos 100 datos sin invertir
           const tiempos = data.map(item => {
             const date = new Date(item.Tiempo);
             const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -67,7 +72,7 @@ function App() {
           const velocidades = data.map(item => item.Velocidad);
           const referencias = data.map(item => item.Referencia);
           const senalControl = data.map(item => item.Senal_control);
-  
+
           // Actualizar las gráficas
           setDataVelocidad({
             labels: tiempos,
@@ -90,7 +95,7 @@ function App() {
               },
             ],
           });
-  
+
           setDataSenalControl({
             labels: tiempos,
             datasets: [
@@ -104,7 +109,7 @@ function App() {
               },
             ],
           });
-  
+
           // Actualizar las constantes Kp, Ki, Kd, Kn, Ks
           setValues({
             Kp: lastEntry.Kp,
@@ -112,19 +117,20 @@ function App() {
             Kd: lastEntry.Kd,
             Kn: lastEntry.Kn,
             Ks: lastEntry.Ks,
+            IAE: lastEntry.IAE,
+            ISE: lastEntry.ISE,
           });
         })
         .catch(error => console.error('Error al obtener los datos:', error));
     };
-  
-    const intervalId = setInterval(fetchData, 1000); // Actualiza cada segundo
+
+    const intervalId = setInterval(fetchData, 200); // Actualiza cada segundo
     return () => clearInterval(intervalId); // Limpia el intervalo al desmontar el componente
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setValues({
-      ...values,
+    setValues({values,
       [name]: parseFloat(value),
     });
   };
@@ -193,13 +199,13 @@ function App() {
         <img src={logo} alt="Logo EPN" className="logo" />
         <div className="header-titles">
           <h1>ESCUELA POLITÉCNICA NACIONAL</h1>
-          <h2>INTERFAZ REMOTA DE CONTROL DE VELOCIDAD DE UN MOTOR DC</h2>
+          <h2>INTERFAZ REMOTA DEL CONTROL DE VELOCIDAD DE UN MOTOR DC</h2>
         </div>
       </header>
 
       <div className="container">
         <div className="slider-container">
-          <h2>Referencia</h2>
+          <h2>Referencia de Velocidad</h2>
           <div className="slider-wrapper">
             <div className="slider-scale">
               <span>5000</span>
@@ -223,15 +229,15 @@ function App() {
               className="vertical-slider"
             />
           </div>
-          <p className="slider-value">Velocidad de Referencia: {sliderValue}</p>
+          <p className="slider-value">Velocidad de Referencia: {sliderValue} (RPM) </p>
         </div>
 
         <div className="controls-container">
-          <h2>Constantes</h2>
+          <h3>CONSTANTES CONTROLADORES</h3>
           <div className="controls">
-            <h3>Constantes Controlador PID</h3>
+            <h3>Controlador PID</h3>
             <label>
-              Kp:  
+              Kp:
               <input
                 type="number"
                 step="0.001"
@@ -242,7 +248,7 @@ function App() {
             </label>
             <br />
             <label>
-              Ki:  
+              Ki:
               <input
                 type="number"
                 step="0.001"
@@ -253,7 +259,7 @@ function App() {
             </label>
             <br />
             <label>
-              Kd:  
+              Kd:
               <input
                 type="number"
                 step="0.001"
@@ -263,9 +269,9 @@ function App() {
               />
             </label>
 
-            <h3>Constantes Controlador PID No Lineal</h3>
+            <h3>Controlador PI No Lineal</h3>
             <label>
-              Kn:  
+              Kn:
               <input
                 type="number"
                 step="0.001"
@@ -276,7 +282,7 @@ function App() {
             </label>
             <br />
             <label>
-              Ks:  
+              Ks:
               <input
                 type="number"
                 step="0.001"
@@ -286,39 +292,64 @@ function App() {
               />
             </label>
           </div>
+          <h3>ÍNDICES DE DESEMPEÑO</h3>
+          <div className="controls">
+            <label>
+              IAE:
+              <input
+                type="number"
+                step="0.001"
+                name="IAE"
+                value={values.IAE}
+                onChange={handleInputChange}
+              />
+            </label>
+            <br />
+            <label>
+              ISE:
+              <input
+                type="number"
+                step="0.001"
+                name="ISE"
+                value={values.ISE}
+                onChange={handleInputChange}
+              />
+            </label>
+          </div>  
         </div>
-
-
 
         <div className="chart-gauge-pair">
           <div className="chart">
-            <h2>Velocidad del Motor</h2>
-            <Line data={dataVelocidad} options={optionsVelocidad}  />
+            <h2>VELOCIDAD DEL MOTOR</h2>
+            <Line data={dataVelocidad} options={optionsVelocidad} />
           </div>
           <div className="chart">
-            <h2>Voltaje del Motor</h2>
+            <h2>VOLTAJE</h2>
             <Line data={dataSenalControl} options={optionsSenalControl} />
           </div>
-          
-        </div>
 
+        </div>
 
         <div className="chart-gauge-pair">
           <div className="gauge">
-            <h2>Velocidad Actual</h2>
+            <h3>VELOCIDAD DE REFERENCIA</h3>
+            <CustomGauge value={referenciaActual} max={5000} label="RPM" />
+          </div>
+          <div className="gauge">
+            <h3>VELOCIDAD MEDIDA</h3>
             <CustomGauge value={velocidadActual} max={5000} label="RPM" />
           </div>
           <div className="gauge">
-            <h2>Voltaje Actual</h2>
+            <h3>VOLTAJE</h3>
             <CustomGauge value={senalControlActual} max={6} label="V" />
           </div>
 
         </div>
 
-        
       </div>
     </div>
   );
 }
 
 export default App;
+

@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS Medidas (
     Kn FLOAT,
     Ks FLOAT,
     Ref_remota FLOAT,
+    IAE FLOAT,
+    ISE FLOAT,
     Selector INT
 )
 """)
@@ -42,35 +44,35 @@ print(f"Servidor de escritura escuchando en {server_ip}:{server_port}")
 
 while True:
     client_socket, client_address = server_socket.accept()
-    print(f"Conexión desde {client_address}")
+    # print(f"Conexión desde {client_address}")
     data = client_socket.recv(1024).decode()
-    print(f"Datos recibidos: {data}")  # Imprimir los datos recibidos para verificar el formato
+    # print(f"Datos recibidos: {data}") # Imprimir los datos recibidos para verificar el formato
 
     # Verificar si los datos recibidos son una solicitud HTTP
     if data.startswith("GET") or data.startswith("POST"):
-        print("Solicitud HTTP recibida, no se puede procesar como datos de ESP32.")
+        # print("Solicitud HTTP recibida, no se puede procesar como datos de ESP32.")
         client_socket.close()
         continue
 
     try:
         # Dividir los datos recibidos en las variables respectivas
-        velocidad_value, referencia_value, senal_control_value, kp_value, ki_value, kd_value, kn_value, ks_value, selector_value = map(float, data.strip().split(','))
+        velocidad_value, referencia_value, senal_control_value, kp_value, ki_value, kd_value, kn_value, ks_value, iae_value, ise_value, selector_value = map(float, data.strip().split(','))
 
         # Ajustar la señal de control a rango de 0 a 5 si está en 0-255
         senal_control_value = senal_control_value * (5.0 / 255.0)
-        print(f"Valores procesados: Velocidad={velocidad_value}, Referencia={referencia_value}, Señal Control={senal_control_value}, Selector={selector_value}")
+        # print(f"Valores procesados: Velocidad={velocidad_value}, Referencia={referencia_value}, Señal Control={senal_control_value}, Selector={selector_value}")
 
         # Obtener la hora actual en UTC
         now_utc = datetime.now(pytz.utc)
 
         # Inserción de los datos en la base de datos
         cursor.execute("""
-            INSERT INTO Medidas (Tiempo, Velocidad, Referencia, Senal_control, Kp, Ki, Kd, Kn, Ks, Selector)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (now_utc, velocidad_value, referencia_value, senal_control_value, kp_value, ki_value, kd_value, kn_value, ks_value, selector_value))
+            INSERT INTO Medidas (Tiempo, Velocidad, Referencia, Senal_control, Kp, Ki, Kd, Kn, Ks, IAE, ISE, Selector)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s ,%s)
+        """, (now_utc, velocidad_value, referencia_value, senal_control_value, kp_value, ki_value, kd_value, kn_value, ks_value, iae_value,ise_value, selector_value))
 
         db.commit()
-        print(f"Datos almacenados en la base de datos correctamente.")
+        # print(f"Datos almacenados en la base de datos correctamente.")
 
     except ValueError as e:
         print(f"Error al procesar los datos recibidos: {e}")
@@ -81,3 +83,4 @@ while True:
 
     finally:
         client_socket.close()
+

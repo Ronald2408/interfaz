@@ -68,29 +68,19 @@ app.post('/actualizar-slider', (req, res) => {
     console.log('Valor del slider no es válido');
     return res.status(400).send('Valor del slider no es válido');
   }
-
-  const queryUpdate = 'UPDATE Medidas SET Ref_remota = ? ORDER BY id DESC LIMIT 1';
-  db.query(queryUpdate, [sliderValue], (err, result) => {
-    if (err) {
-      console.error('Error en la actualización de Ref_remota:', err);
-      return res.status(500).send(err);
-    }
-    console.log('Valor del slider actualizado correctamente en Ref_remota');
-
-    // Si la ESP32 está conectada, enviamos el valor directamente
-    if (esp32Socket) {
-      esp32Socket.send(JSON.stringify({ ref_remota: sliderValue }));
-      console.log('Valor de Ref_remota enviado a la ESP32:', sliderValue);
-    }
-
+  // Si la ESP32 está conectada, enviamos el valor directamente
+  if (esp32Socket) {
+    esp32Socket.send(JSON.stringify({ ref_remota: sliderValue }));
+    console.log('Valor de Ref_remota enviado a la ESP32:', sliderValue);
     res.send('Valor del slider actualizado correctamente y enviado a la ESP32');
-  });
+  }  
+  
 });
 
 // Ruta para obtener los datos más recientes para las gráficas
 app.get('/datos', (req, res) => {
   console.log('Solicitud GET recibida en /datos');
-  const query = 'SELECT Tiempo, Velocidad, Referencia, Senal_control, Kp, Ki, Kd, Kn, Ks FROM Medidas ORDER BY id DESC LIMIT 50';
+  const query = 'SELECT Tiempo, Velocidad, Referencia, Senal_control, Kp, Ki, Kd, Kn, Ks, IAE, ISE, Selector FROM Medidas ORDER BY id DESC LIMIT 20';
   db.query(query, (err, result) => {
     if (err) {
       console.error('Error en la consulta SQL:', err);

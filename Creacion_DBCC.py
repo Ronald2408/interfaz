@@ -24,8 +24,10 @@ cursor.execute("""
         Kd FLOAT,
         Kn FLOAT,
         Ks FLOAT,
-        Ref_remota FLOAT,
-        Selector INT
+        IAE FLOAT,
+        ISE FLOAT,     
+        Selector INT,
+        Ref_remota FLOAT
     )
 """)
 

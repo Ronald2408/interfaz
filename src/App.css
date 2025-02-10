@@ -147,19 +147,19 @@
   margin-left: -1px;
   background-color: #ffffff;
   border: 1px solid #ccc; /* Borde alrededor del contenedor */
-  padding: 10px;
-  border-radius: 1px;
+  padding: 4px;
+  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(3, 3, 3, 0.1);
 }
 
 .controls-container h2 {
-  margin-bottom: 30px;
+  margin-bottom: 9px;
   margin-left: -10px;
 }
 
 .controls label {
   display: block;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
 .controls input[type="number"] {
@@ -201,9 +201,9 @@
   text-align: center; /* Alinea el texto centrado */
   margin: 20px auto; /* Centra el gauge en el contenedor */
   width: 300px; /* Ancho del contenedor */
-  height: 355px; /* Altura del contenedor */
+  height: 200px; /* Altura del contenedor */
   background-color: #f9f9f9; /* Color de fondo */
-  padding: 20px; /* Espaciado interno */
+  padding: 31px; /* Espaciado interno */
   border: 2px solid #ccc; /* Borde suave */
   border-radius: 10px; /* Bordes redondeados */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra */
@@ -211,7 +211,7 @@
 
 .gauge-title {
   margin-bottom: 10px; /* Espacio entre el título y el círculo */
-  font-size: 18px; /* Tamaño de la fuente */
+  font-size: 1px; /* Tamaño de la fuente */
   color: #333; /* Color del texto */
 }
 
@@ -219,12 +219,12 @@
   display: flex; /* Flexbox para centrar el círculo */
   justify-content: center; /* Centra horizontalmente */
   align-items: center; /* Centra verticalmente */
-  width: 100%;
-  height: 100%;
+  width: 30%;
+  height: 80%;
 }
 
 #velocidad-gauge,
 #voltaje-gauge {
-  width: 90%; /* Ajusta el tamaño del gauge */
+  width: 700%; /* Ajusta el tamaño del gauge */
   height: auto; /* Mantiene la proporción */
 }
